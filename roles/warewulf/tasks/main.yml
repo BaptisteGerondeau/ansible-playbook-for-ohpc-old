@@ -127,7 +127,7 @@
 - name: Generate cluster ssh keys on master
   command: wwinit ssh_keys
   register: result
-  failed_when: result.rc not in [0]
+  failed_when: result.rc not in [0, 1]
   when:
     - inventory_hostname in groups[nt_sms]
     - enable_warewulf == true
@@ -147,21 +147,25 @@
     - inventory_hostname in groups[nt_sms]
     - enable_warewulf == true
 
-#- name: Fetch /tmp/cluster.pub in sms to a ansible local /tmp
-#  fetch:
-#    src: /tmp/cluster.pub
-#    dest: /tmp/cluster/cluster.pub
-#    flat: yes
-#  when:
-#    - inventory_hostname in groups[nt_sms]
-#    - enable_warewulf == true
-
 - name: Copy /tmp/cluster.pub in ansible local to a computing node
-  copy: src=/tmp/cluster.pub dest="{{ ansible_home }}/.ssh/cluster.pub"
+  fetch: 
+    src: /tmp/cluster.pub 
+    dest: /tmp/cluster.pub
+    flat: yes
   when:
     - inventory_hostname in groups[nt_cnodes]
     - enable_warewulf == true
 
+- name: Copy /tmp/cluster.pub in ansible local to a computing node
+  copy: 
+    src: /tmp/cluster.pub 
+    dest: "{{ ansible_home }}/.ssh/cluster.pub"
+  when:
+    - inventory_hostname in groups[nt_cnodes]
+    - enable_warewulf == true
+    
+# NOTE: lookup does only work on local (where the ansible is called) files.
+# Thus we need to fetch the file.
 - name: Add cluster.pub to authorized_keys on a computing node
   lineinfile:
     path: '/root/.ssh/authorized_keys'
