@@ -43,12 +43,12 @@
 
   roles:
     - common
+    - ohpc-base
     - net-eth
     - net-ib
     - net-infinipath
     - kernel
     - dhcpd
-    - ohpc-base
     - lmod
     - slurm-server
     - nfs

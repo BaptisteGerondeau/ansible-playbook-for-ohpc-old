@@ -33,6 +33,22 @@
     ( inventory_hostname in groups[nt_devnodes] ) or
     ( ( inventory_hostname in groups[nt_cnodes] ) and ( enable_warewulf == false ) ) 
 
+- name: Install ohpc-warewulf on master
+  yum: name={{ item }} state=latest
+  with_items:
+    - ohpc-warewulf
+  when:
+    - inventory_hostname in groups[nt_sms]
+    - enable_warewulf == true
+
+- name: Build initial chroot image on master
+  command: wwmkchroot centos-7 "{{ compute_chroot_loc }}"
+  register: result
+  failed_when: result.rc not in [0, 1]
+  when:
+    - inventory_hostname in groups[nt_sms]
+    - enable_warewulf == true
+
 #yum -y --installroot=$CHROOT groupinstall ohpc-base-compute
 - name: Install ohpc-base-compute for computing node images on master
   yum: name={{ item }} installroot="{{ compute_chroot_loc }}" state=latest
