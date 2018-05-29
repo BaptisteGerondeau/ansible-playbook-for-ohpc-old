@@ -29,6 +29,11 @@
 
 #for computing nodes with warewulf
 - name: Install ohpc-autotools for a computing image on master
+  yum: name=perl installroot="{{ compute_chroot_loc }}" state=latest
+  when:
+    ( ( inventory_hostname in groups[nt_sms] ) and ( enable_warewulf == true ) )
+    
+- name: Install ohpc-autotools for a computing image on master
   yum: name=ohpc-autotools installroot="{{ compute_chroot_loc }}" state=latest
   when:
     ( ( inventory_hostname in groups[nt_sms] ) and ( enable_warewulf == true ) )
