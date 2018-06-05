@@ -92,7 +92,6 @@
     - inventory_hostname in groups[nt_sms]
     - enable_warewulf == true
 
-
 # slurm.conf has quite a lot of parameters, it might be useful using the html conf generator
 - name: Check if we supplied a manually generated slurm.conf file to be used
   delegate_to: localhost
