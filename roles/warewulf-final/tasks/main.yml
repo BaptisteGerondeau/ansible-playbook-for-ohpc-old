@@ -173,6 +173,19 @@
     - inventory_hostname in groups[nt_sms]
     - enable_warewulf == true
 
+# Add additional modules that should be loaded by modprobe
+- name: Add modprobe += "{{ additional_modules }}" to WW_CONF
+  lineinfile:
+    path: /etc/warewulf/bootstrap.conf
+    state: present
+    backrefs: no
+    regexp: '^modprobe \+= "{{ additional_modules }}"$'
+    line: "modprobe += {{ additional_modules }}"
+  when:
+    - inventory_hostname in groups[nt_sms]
+    - enable_warewulf == true
+    - additional_modules != ''
+
 # wwbootstrap `uname -r`
 - name: Execute wwbootstrap `uname -r` on master
   shell: wwbootstrap `uname -r`
