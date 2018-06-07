@@ -61,19 +61,17 @@
     - inventory_hostname in groups[nt_cnodes]
     - enable_warewulf == false
 
-#perl -pi -e "s/ControlMachine=\S+/ControlMachine=${sms_name}/" /etc/slurm/slurm.conf
-- name: Identify resource manager hostname on master
-  replace: dest=/etc/slurm/slurm.conf regexp='ControlMachine=\S+' replace="ControlMachine={{ sms_name }}" backup=yes
-  when:
-    ( inventory_hostname in groups[nt_sms] ) or
-    ( ( inventory_hostname in groups[nt_cnodes] ) and ( enable_warewulf == false ) )
-
 - block:
+#perl -pi -e "s/ControlMachine=\S+/ControlMachine=${sms_name}/" /etc/slurm/slurm.conf
+  - name: Identify resource manager hostname on master
+    replace: dest=/etc/slurm/slurm.conf regexp='ControlMachine=\S+' replace="ControlMachine={{ sms_name }}" backup=yes
+
+  - replace: dest="/etc/slurm/slurm.conf" regexp='^FastSchedule=(\d)' replace="FastSchedule=0" backup=yes
 
   - name: slum configuration on master and computing node    # Todo:It may not be written here
-    replace: dest=/etc/slurm/slurm.conf regexp='^NodeName=(\S+).+State=(\S+)' replace="NodeName={{ compute_prefix }}[1-{{ num_computes }}] State=\2" backup=yes
+    replace: dest=/etc/slurm/slurm.conf regexp='^NodeName=(\S+).+State=(\S+)' replace="NodeName={{ compute_regex}} State=UNKNOWN" backup=yes
   - name: slum configuration on master and computing node    # Todo:It may not be written here
-    replace: dest=/etc/slurm/slurm.conf regexp='^PartitionName=normal Nodes=(\S+)' replace="PartitionName=normal Nodes={{ compute_prefix }}[1-{{ num_computes }}]" backup=yes
+    replace: dest=/etc/slurm/slurm.conf regexp='^PartitionName=normal MaxTime=(\S+) Nodes=(\S+)' replace="PartitionName=normal MaxTime=INFINITE Nodes={{ compute_regex }}" backup=yes
 
   when: 
     ( ( inventory_hostname in groups[nt_sms] ) or
@@ -81,12 +79,21 @@
     ( inventory_hostname in groups[nt_cnodes] ) ) and ( enable_warewulf == false )
 
 - block:
+#perl -pi -e "s/ControlMachine=\S+/ControlMachine=${sms_name}/" /etc/slurm/slurm.conf
+  - name: Identify resource manager hostname on master
+    replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='ControlMachine=\S+' replace="ControlMachine={{ sms_name }}" backup=yes
+
+  - replace:
+      dest: "{{ compute_chroot_loc }}/etc/slurm/slurm.conf"
+      regexp: '^FastSchedule=(\d)'
+      replace: "FastSchedule=1"
+      backup: yes
 
   - name: slum configuration on master    # Todo:It may not be written here
-    replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='^NodeName=(\S+).+State=(\S+)' replace="NodeName={{ compute_prefix }}[1-{{ num_computes }}] State=\2" backup=yes
+    replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='^NodeName=(\S+).+State=(\S+)' replace="NodeName={{ compute_regex }} State=UNKNOWN" backup=yes
 
   - name: slum configuration on master     # Todo:It may not be written here
-    replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='^PartitionName=normal Nodes=(\S+)' replace="PartitionName=normal Nodes={{ compute_prefix }}[1-{{ num_computes }}]" backup=yes
+    replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='^PartitionName=normal MaxTime=(\S+) Nodes=(\S+)' replace="PartitionName=normal MaxTime=INFINITE Nodes={{ compute_regex }}" backup=yes
 
   when: 
     - inventory_hostname in groups[nt_sms]
