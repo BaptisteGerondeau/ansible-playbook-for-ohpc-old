@@ -181,7 +181,7 @@
 - name: Fetch /tmp/cluster.pub in sms to a ansible local /tmp
   fetch:
     src: /root/.ssh/cluster.pub
-    dest: /tmp/cluster.pub
+    dest: "{{ role_path }}/cluster.pub"
     flat: yes
   when:
     - inventory_hostname in groups[nt_sms]
@@ -189,7 +189,7 @@
 # stateful
 - name: Copy ~/.ssh/cluster.pub to /tmp to copy the key on master
   copy:
-    src: /tmp/cluster.pub
+    src: "{{ role_path }}/cluster.pub"
     dest: /root/.ssh/cluster.pub
   when:
     - inventory_hostname in groups[nt_cnodes]
