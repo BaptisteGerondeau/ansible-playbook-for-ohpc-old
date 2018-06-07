@@ -201,7 +201,7 @@
     state: present
     backrefs: no
     create: yes
-    line: "{{ lookup('file', '/tmp/cluster.pub') }}"
+    line: "{{ lookup('file', '{{ role_path }}/cluster.pub') }}"
   when:
     - inventory_hostname in groups[nt_sms]
     - enable_warewulf == true
@@ -213,7 +213,7 @@
     state: present
     backrefs: no
     create: yes
-    line: "{{ lookup('file', '/tmp/cluster.pub') }}"
+    line: "{{ lookup('file', '{{ role_path }}/cluster.pub') }}"
   when:
     - inventory_hostname in groups[nt_cnodes]
     - enable_warewulf == false
