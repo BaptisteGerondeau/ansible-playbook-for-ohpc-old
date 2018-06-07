@@ -97,9 +97,11 @@
 - name: Check if we supplied a manually generated slurm.conf file to be used
   delegate_to: localhost
   become: no
-  stat: path="{{ role_path }}/files/slurm.conf"
+  stat: 
+    path: "{{ role_path }}/files/slurm.conf"
   register: result
   ignore_errors: yes
+
 - debug:
   var: result
 
