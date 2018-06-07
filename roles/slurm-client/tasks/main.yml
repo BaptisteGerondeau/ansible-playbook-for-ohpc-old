@@ -64,14 +64,20 @@
 - block:
 #perl -pi -e "s/ControlMachine=\S+/ControlMachine=${sms_name}/" /etc/slurm/slurm.conf
   - name: Identify resource manager hostname on master
-    replace: dest=/etc/slurm/slurm.conf regexp='ControlMachine=\S+' replace="ControlMachine={{ sms_name }}" backup=yes
+    replace: dest="/etc/slurm/slurm.conf" regexp='ControlMachine=\S+' replace="ControlMachine={{ sms_name }}" backup=yes
 
   - replace: dest="/etc/slurm/slurm.conf" regexp='^FastSchedule=(\d)' replace="FastSchedule=0" backup=yes
 
   - name: slum configuration on master and computing node    # Todo:It may not be written here
-    replace: dest=/etc/slurm/slurm.conf regexp='^NodeName=(\S+).+State=(\S+)' replace="NodeName={{ compute_regex}} State=UNKNOWN" backup=yes
+    replace: dest="/etc/slurm/slurm.conf" regexp='^NodeName=(\S+).+State=(\S+)' replace="NodeName={{ compute_regex}} State=UNKNOWN" backup=yes
   - name: slum configuration on master and computing node    # Todo:It may not be written here
-    replace: dest=/etc/slurm/slurm.conf regexp='^PartitionName=normal MaxTime=(\S+) Nodes=(\S+)' replace="PartitionName=normal MaxTime=INFINITE Nodes={{ compute_regex }}" backup=yes
+    replace: dest="/etc/slurm/slurm.conf" regexp='^PartitionName=(\S+)' replace="PartitionName=normal" backup=yes
+
+  - name: replace NodeNames
+    replace: dest="/etc/slurm/slurm.conf" regexp='Nodes=(\S+)' replace="Nodes={{ compute_regex }}" backup=yes
+
+  - name: replace MaxTime
+    replace: dest="/etc/slurm/slurm.conf" regexp='MaxTime=24:00:00' replace="MaxTime=INFINITE" backup=yes
 
   when: 
     ( ( inventory_hostname in groups[nt_sms] ) or
@@ -92,8 +98,14 @@
   - name: slum configuration on master    # Todo:It may not be written here
     replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='^NodeName=(\S+).+State=(\S+)' replace="NodeName={{ compute_regex }} State=UNKNOWN" backup=yes
 
-  - name: slum configuration on master     # Todo:It may not be written here
-    replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='^PartitionName=normal MaxTime=(\S+) Nodes=(\S+)' replace="PartitionName=normal MaxTime=INFINITE Nodes={{ compute_regex }}" backup=yes
+  - name: slum configuration on master and computing node    # Todo:It may not be written here
+    replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='^PartitionName=(\S+)' replace="PartitionName=normal" backup=yes
+
+  - name: replace NodeNames
+    replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='Nodes=(\S+)' replace="Nodes={{ compute_regex }}" backup=yes
+
+  - name: replace MaxTime
+    replace: dest="{{ compute_chroot_loc }}/etc/slurm/slurm.conf" regexp='MaxTime=24:00:00' replace="MaxTime=INFINITE" backup=yes
 
   when: 
     - inventory_hostname in groups[nt_sms]
