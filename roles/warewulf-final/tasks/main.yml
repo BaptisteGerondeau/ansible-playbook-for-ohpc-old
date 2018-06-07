@@ -324,7 +324,13 @@
   when:
     - inventory_hostname in groups[nt_sms]
     - enable_ganglia == true
-# fi
+    # fi
+
+- name: Mount the nfs on the compute nodes
+  shell: mount -a
+  when:
+    - inventory_hostname in groups[nt_cnodes]
+    - enable_warewulf == false
 
 #systemctl restart dhcpd
 - name: Start dhcpd on master
