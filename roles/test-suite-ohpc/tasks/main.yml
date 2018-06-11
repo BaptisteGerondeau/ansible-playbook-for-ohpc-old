@@ -1,0 +1,18 @@
+- block:
+    - name: Install test suite
+      yum:
+        name: test-suite-ohpc
+        state: latest
+
+    - name: Configure test suite
+      shell: cd /home/ohpc-test/tests && ./configure && make check
+      become: yes
+      become_user: ohpc-test
+      become_method: su
+      register: testsuite_output
+
+    - debug: msg="{{ testsuite_output.stdout_lines }} {{ testsuite_output.stderr_lines }}"
+
+  when:
+    - inventory_hostname in groups[nt_sms]
+    - enable_testsuiteohpc == True
