@@ -81,5 +81,5 @@
     - imb
     - warewulf
     - slurm-client
-    # - booting-computing-nodes/
-
+    # - booting-computing-nodes
+    - helloworld
