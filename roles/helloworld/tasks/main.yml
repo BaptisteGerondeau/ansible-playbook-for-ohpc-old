@@ -32,7 +32,7 @@
       - inventory_hostname in groups[nt_sms]
       - enable_nfs_home == True
 
-  - debug: msg="{{ test_output.stdout }}"
+  - debug: msg="{{ test_output.stdout_lines }}"
     when:
       - inventory_hostname in groups[nt_sms]
 
