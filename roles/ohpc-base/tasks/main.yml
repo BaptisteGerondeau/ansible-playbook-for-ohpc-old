@@ -69,4 +69,3 @@
       #    - inventory_hostname in groups[nt_sms]
       #    - enable_warewulf == false
 
-
