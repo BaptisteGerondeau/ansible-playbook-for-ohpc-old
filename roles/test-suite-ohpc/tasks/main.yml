@@ -4,10 +4,23 @@
         name: test-suite-ohpc
         state: latest
 
-    - name: Install test suite
+    - name: Install TAU for openmpi3 (default is mpich)
       yum:
         name: tau-gnu7-openmpi3-ohpc
         state: latest
+
+    - name: Create the ohpc-test user on cnodes
+      shell: source /root/.bashrc &&  pdsh -w {{ compute_regex }} useradd -m ohpc-test
+      when:
+        - enable_warewulf == False
+      register: useradd_output
+
+    - debug: msg="{{ useradd_output.stdout_lines }}"
+
+    - name: Create the ohpc-test user on cnodes
+      shell: wwsh file resync passwd shadow group ; pdsh -w {{ compute_regex }} /warewulf/bin/wwgetfiles
+      when:
+        - enable_warewulf == True
 
     - name: Configure test suite
       shell: cd /home/ohpc-test/tests &&  ./configure --disable-papi  --disable-likwid  --enable-fftw  --enable-scotch  --enable-boost  --enable-boost-mpi  --enable-ptscotch  --enable-openblas  --enable-plasma  --enable-packaging  --with-mpi-families=openmpi3  --with-compiler-families=gnu7  && make check
