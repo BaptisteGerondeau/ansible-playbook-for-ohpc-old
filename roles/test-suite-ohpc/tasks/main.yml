@@ -4,6 +4,11 @@
         name: test-suite-ohpc
         state: latest
 
+    - name: Install test suite
+      yum:
+        name: tau-gnu7-openmpi3-ohpc
+        state: latest
+
     - name: Configure test suite
       shell: cd /home/ohpc-test/tests &&  ./configure --disable-papi  --disable-likwid  --enable-fftw  --enable-scotch  --enable-boost  --enable-boost-mpi  --enable-ptscotch  --enable-openblas  --enable-plasma  --enable-packaging  --with-mpi-families=openmpi3  --with-compiler-families=gnu7  && make check
       become: yes
