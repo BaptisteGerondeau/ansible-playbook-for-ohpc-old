@@ -5,15 +5,6 @@
     - enable_warewulf == False
     - inventory_hostname in groups[nt_cnodes]
 
-- name: Testing pdsh
-  shell: "pdsh -w {{ compute_regex }} uptime"
-  register: uptime
-  when:
-    - inventory_hostname in groups[nt_sms]
-
-- debug: msg="{{ uptime.stdout_lines }} {{ uptime.stderr_lines }}"
-  when:
-    - inventory_hostname in groups[nt_sms]
 
 - block:
     - name: Install test suite

@@ -6,6 +6,16 @@
       state: present
     when:
       - inventory_hostname in groups[nt_sms]
+      
+  - name: Testing pdsh
+    shell: "pdsh -w {{ compute_regex }} uptime"
+    register: uptime
+    when:
+      - inventory_hostname in groups[nt_sms]
+
+  - debug: msg="{{ uptime.stdout_lines }} {{ uptime.stderr_lines }}"
+    when:
+      - inventory_hostname in groups[nt_sms]
 
   - name: Propagate this to the computes in stateful
     user: 
