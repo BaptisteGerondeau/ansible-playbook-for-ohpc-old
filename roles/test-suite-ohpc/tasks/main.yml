@@ -5,6 +5,16 @@
     - enable_warewulf == False
     - inventory_hostname in groups[nt_cnodes]
 
+- name: Testing pdsh
+  shell: "pdsh -w {{ compute_regex }} uptime"
+  register: uptime
+  when:
+    - inventory_hostname in groups[nt_sms]
+
+- debug: msg="{{ uptime.stdout_lines }} {{ uptime.stderr_lines }}"
+  when:
+    - invenotry_hostname in groups[nt_sms]
+
 - block:
     - name: Install test suite
       yum:
@@ -17,7 +27,7 @@
         state: latest
 
     - name: Create the ohpc-test user on cnodes
-      shell: wwsh file resync passwd shadow group ; pdsh -w {{ compute_regex }} /warewulf/bin/wwgetfiles
+      shell: "wwsh file resync passwd shadow group ; pdsh -w {{ compute_regex }} /warewulf/bin/wwgetfiles"
       when:
         - enable_warewulf == True
 
