@@ -1,3 +1,10 @@
+- name: Create the ohpc-test user on cnodes
+  user:
+    name: ohpc-test
+  when:
+    - enable_warewulf == False
+    - inventory_hostname in groups[nt_cnodes]
+
 - block:
     - name: Install test suite
       yum:
@@ -8,14 +15,6 @@
       yum:
         name: tau-gnu7-openmpi3-ohpc
         state: latest
-
-    - name: Create the ohpc-test user on cnodes
-      shell: source /root/.bashrc &&  pdsh -w {{ compute_regex }} useradd -m ohpc-test
-      when:
-        - enable_warewulf == False
-      register: useradd_output
-
-    - debug: msg="{{ useradd_output.stdout_lines }}"
 
     - name: Create the ohpc-test user on cnodes
       shell: wwsh file resync passwd shadow group ; pdsh -w {{ compute_regex }} /warewulf/bin/wwgetfiles
