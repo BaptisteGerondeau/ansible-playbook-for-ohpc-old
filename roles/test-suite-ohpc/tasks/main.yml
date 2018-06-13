@@ -13,7 +13,7 @@
 
 - debug: msg="{{ uptime.stdout_lines }} {{ uptime.stderr_lines }}"
   when:
-    - invenotry_hostname in groups[nt_sms]
+    - inventory_hostname in groups[nt_sms]
 
 - block:
     - name: Install test suite
