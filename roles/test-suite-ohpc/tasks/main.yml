@@ -35,7 +35,40 @@
         state: latest
 
     - name: Configure test suite
-      shell: cd /home/ohpc-test/tests &&  ./configure --disable-papi  --disable-likwid  --enable-fftw  --enable-scotch  --enable-boost  --enable-boost-mpi  --enable-ptscotch  --enable-openblas  --enable-plasma  --enable-packaging  --with-mpi-families=openmpi3  --with-compiler-families=gnu7
+      shell: "cd /home/ohpc-test/tests && \
+             ./configure --disable-papi \
+              --disable-likwid \
+              --enable-boost \
+              --enable-boost-mpi \
+              --enable-fftw \
+              --enable-ocr \
+              --enable-superlu \
+              --enable-superlu_dist \
+              --enable-autotools \
+              --enable-easybuild \
+              --enable-scipy \
+              --enable-numpy \
+              --enable-mpi4py \
+              --enable-R \
+              --enable-trilinos \
+              --enable-slepc \
+              --enable-petsc \
+              --enable-rms-harness \
+              --enable-ptscotch \
+              --enable-scotch \
+              --enable-cmake \
+              --enable-munge \
+              --enable-metis \
+              --enable-mfem \
+              --enable-packaging \
+              --enable-mumps \
+              --enable-openblas \
+              --enable-scalapack \
+              --enable-spack \
+              --enable-gsl \
+              --enable-plasma \
+              --with-compiler-families=gnu7 \
+              --with-mpi-families=openmpi3"
       become: yes
       become_user: ohpc-test
       become_method: su
